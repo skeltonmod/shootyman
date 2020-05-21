@@ -75,7 +75,9 @@ tracks/1/keys = {
 [sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 5, 4 )
 
-[node name="Bullet" type="RigidBody2D"]
+[node name="Bullet" type="RigidBody2D" groups=[
+"bullet",
+]]
 z_index = 3
 gravity_scale = 0.0
 contacts_reported = 1
