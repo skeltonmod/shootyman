@@ -97,6 +97,7 @@ extents = Vector2( 8, 16 )
 [node name="enemy" type="KinematicBody2D" groups=[
 "enemy",
 ]]
+z_index = 4
 script = ExtResource( 8 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]

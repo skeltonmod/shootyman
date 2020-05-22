@@ -65,7 +65,7 @@ func do_shooting(delta):
 	var shoot_key = Input.is_action_just_pressed("ui_shoot")
 	var bullet_instance = bullet.instance()
 	if shoot_key:
-		screen_shake.start(0.1,5,5,0)
+		screen_shake.shake(0.25, 30, 2 )
 		gun.add_child(bullet_instance)
 		gun.position.x = lerp(gun.position.x + (3.5 if gun.flip_h == true else -3.5), sprite.position.x, delta * 2)
 		gun.rotation = rand_range(-0.25,0.25)
@@ -87,7 +87,7 @@ func do_shooting(delta):
 
 func _on_hitbox_body_entered(body):
 	if "enemy" in body.name:
-		screen_shake.start(0.5,10,40,0)
+		screen_shake.shake(0.25, 30, 20 )
 		red_screen.visible = true
 		red_screen.flash(2)
 	pass # Replace with function body.

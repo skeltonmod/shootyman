@@ -20,6 +20,10 @@ run/main_scene="res://rooms/test_room.tscn"
 boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://icon.png"
 
+[autoload]
+
+GlobalsScore="*res://globals_score.gd"
+
 [display]
 
 window/size/width=640

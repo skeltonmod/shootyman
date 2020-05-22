@@ -1,43 +1,51 @@
 extends Node
 
-const TRANS = Tween.TRANS_BACK
-const EASE = Tween.EASE_OUT
+# some new features
+var is_shaking = false
+var _amplitude = 0.0
+var _timer = 0.0
+var _duration = 0.0
+var _period_in_ms = 0.0
+var _last_shook_timer = 0.0
+var _prev_x  = 0.0
+var _prev_y = 0.0
+var _last_offset = Vector2()
 
-onready var frequency_timer = $Timer
-onready var duration_timer = $duration
-var priority = 0
-var amplitude = 0
 onready var camera = get_parent()
 
-func new_shake():
-	var rand = Vector2()
-	rand.x = rand_range(-amplitude, amplitude)
-	rand.y = rand_range(-amplitude, amplitude)
-	$Tween.interpolate_property(camera,"offset",camera.offset,rand,frequency_timer.wait_time,TRANS,EASE)
-	$Tween.start()
+func _process(delta):
+	if _timer == 0 : return
+	_last_shook_timer = _last_shook_timer + delta
+	
+	while _last_shook_timer >= _period_in_ms:
+		_last_shook_timer = _last_shook_timer - _period_in_ms
+		var intensity = _amplitude * (1 - ((_duration - _timer) / _duration))
+		var new_x = rand_range(-1.0, 1.0)
+		var x_component = intensity * (_prev_x + (delta * (new_x - _prev_x)))
+		var new_y = rand_range(-1.0,1.0)
+		var y_component = intensity * (_prev_y + (delta * (new_y - _prev_y)))
+		_prev_x = new_x
+		_prev_y = new_y
+		var new_offset = Vector2(x_component,y_component)
+		camera.offset -= _last_offset - new_offset
+		_last_offset = new_offset
+	_timer = _timer - delta
+	if _timer <= 0:
+		_timer = 0
+		camera.offset -= _last_offset
+		is_shaking = false
+	
+	pass
 
-func start(duration = 0.2, frequency = 15,start_amplitude = 16, start_priority = 0):
-	if start_priority >= self.priority:
-		self.amplitude = start_amplitude
-		duration_timer.wait_time = duration
-		frequency_timer.wait_time = 1 / float(frequency)
-		duration_timer.start()
-		frequency_timer.start()
-		new_shake()
-		pass
+func shake(duration,frequency,s_amplitude):
+	if is_shaking: return
+	_duration = duration
+	_timer = duration
+	_period_in_ms = 1.0 / frequency
+	_amplitude = s_amplitude
+	_prev_x = rand_range(-1.0,1.0)
+	_prev_y = rand_range(-1.0,1.0)
+	camera.offset -= _last_offset
+	_last_offset = Vector2(0,0)
+	pass
 
-func reset():
-	$Tween.interpolate_property(camera,"offset",camera.offset,Vector2(),frequency_timer.wait_time,TRANS,EASE)
-	$Tween.start()
-	priority = 0
-
-
-func _on_Timer_timeout():
-	new_shake()
-	pass # Replace with function body.
-
-
-func _on_duration_timeout():
-	reset()
-	frequency_timer.stop()
-	pass # Replace with function body.

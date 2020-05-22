@@ -11,11 +11,13 @@ func _ready():
 	
 	pass # Replace with function body.
 
-func destroy(animation):
-	queue_free()
 
 func _on_Timer_timeout():
 	$AnimationPlayer.play("fade")
-	$AnimationPlayer.connect("animation_finished",self,"destroy")
 	
+	pass # Replace with function body.
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	queue_free()
 	pass # Replace with function body.
