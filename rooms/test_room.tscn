@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://player/player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://tiles/tile1.tscn" type="PackedScene" id=2]
@@ -9,13 +9,16 @@
 [ext_resource path="res://effects/screenshake.tscn" type="PackedScene" id=7]
 [ext_resource path="res://effects/rect_white.tscn" type="PackedScene" id=8]
 [ext_resource path="res://rooms/score.tscn" type="PackedScene" id=9]
+[ext_resource path="res://rooms/welcome.tscn" type="PackedScene" id=10]
+[ext_resource path="res://rooms/leaderboard.tscn" type="PackedScene" id=11]
 
 [node name="test_room" type="Node2D" groups=[
 "tilemap",
 ]]
 script = ExtResource( 3 )
 
-[node name="Container" parent="." instance=ExtResource( 9 )]
+[node name="score" parent="." instance=ExtResource( 9 )]
+visible = false
 margin_left = 288.0
 margin_top = 48.0
 margin_right = 400.0
@@ -51,3 +54,15 @@ position = Vector2( 96, 136 )
 
 [node name="Spawner2" parent="." instance=ExtResource( 5 )]
 position = Vector2( 576, 136 )
+
+[node name="welcome" parent="." instance=ExtResource( 10 )]
+margin_left = -16.0
+margin_top = -8.0
+margin_right = -16.0
+margin_bottom = -8.0
+
+[node name="leaderboard" parent="." instance=ExtResource( 11 )]
+margin_left = -16.0
+margin_top = 0.0
+margin_right = -16.0
+margin_bottom = 0.0

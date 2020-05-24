@@ -2,7 +2,7 @@ extends KinematicBody2D
 
 onready var screen_shake = get_tree().get_current_scene().get_node("Camera2D/screenshake")
 onready var flash = get_tree().get_current_scene().get_node("screenflash")
-onready var player = get_tree().get_current_scene().get_node("player")
+onready var player = get_tree().get_current_scene().get_node_or_null("player")
 onready var animplayer = $AnimationPlayer
 onready var sprite = $AnimatedSprite
 onready var collision = $CollisionShape2D
@@ -43,13 +43,16 @@ func _physics_process(delta):
 		flash.flash()
 		flash.visible = true
 		spawn_giblets()
+	if GlobalsScore.in_game == false:
+		screen_shake.shake(0.50, 30,20)
+		spawn_giblets_without_player()
 	pass
 
 func hit():
 	screen_shake.shake(0.25, 30, 2 )
 	animplayer.play("hit")
 	health -= 1
-	$Timer.start()
+#	$Timer.start()
 
 func spawn_giblets():
 	collision.call_deferred("set_disabled",true)
@@ -64,7 +67,26 @@ func spawn_giblets():
 		gib_instance2.global_position = global_position
 	queue_free()
 
+func spawn_giblets_without_player():
+	collision.call_deferred("set_disabled",true)
+	for _i in range(5):
+		var gib_instance = gibles.instance()
+		var gib_instance2 = gibles2.instance()
+		get_parent().add_child(gib_instance)
+		get_parent().add_child(gib_instance2)
+		gib_instance.spawn(sprite.scale.x)
+		gib_instance2.spawn(sprite.scale.x)
+		gib_instance.global_position = global_position
+		gib_instance2.global_position = global_position
+	queue_free()
+
 func _on_Timer_timeout():
-	animplayer.play("default")
-	$Timer.stop()
+#	animplayer.play("default")
+#	$Timer.stop()
+	pass # Replace with function body.
+
+
+func _on_AnimationPlayer_animation_finished(anim_name):
+	if anim_name == "hit":
+		animplayer.play("default")
 	pass # Replace with function body.

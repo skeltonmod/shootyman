@@ -6,13 +6,15 @@ const friction = 0.20
 const jump_height = 95
 const time_jump_apex = 0.4
 const fall_mult = 2
+
+var health = 1
 var motion = Vector2.ZERO
 var gravity
 var jump_force
-var can_shoot = false
 
 
 const bullet = preload("res://player/muzzle_flash.tscn")
+onready var globals = get_node("/root/GlobalsScore")
 onready var screen_shake = get_tree().get_current_scene().get_node("Camera2D/screenshake")
 onready var red_screen = get_tree().get_current_scene().get_node("screenflash")
 onready var sprite = $AnimSprite
@@ -21,6 +23,7 @@ onready var gun_pos = $Gun/Sprite/Position2D
 onready var gun_pos2 = $Gun/Sprite/casings
 onready var muzzle_smoke = $Gun/Sprite/Position2D/particle_smoke
 onready var animplayer = $AnimationPlayer
+onready var leaderboards = get_tree().get_current_scene().get_node("leaderboard").get_node("AnimationPlayer")
 
 func _ready():
 	pass # Replace with function body.
@@ -28,9 +31,18 @@ func _ready():
 func _physics_process(delta):
 	
 	gun.position = lerp(gun.position, sprite.position, delta * 4)
-	do_shooting(delta)
+	if globals.in_game == true:
+		do_shooting(delta)
 	do_movement(delta)
-	
+	if health == 0:
+		
+		leaderboards.play("intro")
+#		SilentWolf.Scores.persist_score("Player", globals.score)
+		globals.in_game = false
+		globals.game_over = true
+		screen_shake.shake(0.25, 40, 30 )
+		red_screen.visible = true
+		queue_free()
 
 func do_movement(delta):
 	gravity = (2 * jump_height) / pow(time_jump_apex,2)
@@ -72,11 +84,9 @@ func do_shooting(delta):
 		bullet_instance.global_position = gun_pos.global_position
 		motion.x = acceleration * (1 if gun.scale.x == -1 else -1)
 		muzzle_smoke.emitting = true
-		can_shoot = true
 		gun_pos.shoot(gun.scale.x)
 		gun_pos2.spawn_casing((1 if gun.scale.x == -1 else -1))
 	else :
-		can_shoot = false
 		gun.rotation = lerp(gun.rotation,0,delta * 2)
 	pass
 
@@ -90,4 +100,5 @@ func _on_hitbox_body_entered(body):
 		screen_shake.shake(0.25, 30, 20 )
 		red_screen.visible = true
 		red_screen.flash(2)
+		health -= 1
 	pass # Replace with function body.
